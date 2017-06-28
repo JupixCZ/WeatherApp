@@ -1,5 +1,8 @@
 package weatherapp.workers;
 
+import weatherapp.domain.weather.MeteocentrumDataContainer;
+import weatherapp.enums.ModuleType;
+
 public class MainThread implements Runnable {
 
     private Thread mainThread;
@@ -12,9 +15,17 @@ public class MainThread implements Runnable {
 
     @Override
     public void run() {
+        DataProvider dataProvider = new DataProvider();
+        
         try {
             while (true) {
                 System.out.println("refresh");
+                
+                dataProvider.prepareModulesData(ModuleType.getAllModules());
+                MeteocentrumDataContainer meteocentrumDataContainer = dataProvider.getMeteocentrumData();
+                
+                System.out.println("ok");
+                
                 Thread.sleep(refreshRate);
             }
         } catch (InterruptedException e) {

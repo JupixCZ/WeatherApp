@@ -2,13 +2,13 @@ package weatherapp.domain.weather;
 
 public class Bio {
 
-    private final short value;
+    private final int value;
 
-    public Bio(short bioValue) {
+    public Bio(int bioValue) {
         this.value = bioValue;
     }
 
-    public short getValue() {
+    public int getValue() {
         return this.value;
     }
 
