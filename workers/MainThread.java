@@ -21,7 +21,8 @@ public class MainThread implements Runnable {
             while (true) {
                 System.out.println("refresh");
                 
-                dataProvider.prepareModulesData(ModuleType.getAllModules());
+                //dataProvider.prepareModulesData(ModuleType.getAllModules());
+                dataProvider.prepareTestModuleData(ModuleType.METEOCENTRUM);
                 MeteocentrumDataContainer meteocentrumDataContainer = dataProvider.getMeteocentrumData();
                 
                 System.out.println("ok");

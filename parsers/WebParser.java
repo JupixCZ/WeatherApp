@@ -11,6 +11,8 @@ public abstract class WebParser {
     
     public abstract MeteoDataContainer getMeteoData();
     
+    public abstract MeteoDataContainer getTestMeteoData();
+    
     protected abstract void healthCheck();
     
     protected abstract void refreshMeteoData();
