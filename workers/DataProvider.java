@@ -5,7 +5,6 @@ import weatherapp.domain.weather.MeteocentrumDataContainer;
 import weatherapp.enums.ModuleType;
 import weatherapp.parsers.MeteocentrumWebParser;
 import weatherapp.parsers.WebParser;
-import weatherapp.utils.FileReader;
 
 public class DataProvider {
 
@@ -19,8 +18,8 @@ public class DataProvider {
             prepareModuleData(moduleType);
         }
     }
-    
-    public MeteocentrumDataContainer getMeteocentrumData(){
+
+    public MeteocentrumDataContainer getMeteocentrumData() {
         return meteocentrumDataContainer;
     }
 
@@ -36,9 +35,9 @@ public class DataProvider {
                 throw new IllegalArgumentException(String.format("Creating web parser for module type %1$d not implemented", moduleType));
         }
     }
-    
-    public void prepareTestModuleData(ModuleType moduleType){
-                WebParser webParser;
+
+    public void prepareTestModuleData(ModuleType moduleType) {
+        WebParser webParser;
 
         switch (moduleType) {
             case METEOCENTRUM:

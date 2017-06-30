@@ -1,6 +1,9 @@
 package weatherapp.parsers;
 
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import weatherapp.domain.weather.Bio;
 import weatherapp.domain.weather.MeteoDataContainer;
 import weatherapp.domain.weather.MeteocentrumDataContainer;
 import weatherapp.enums.ModuleType;
@@ -50,6 +53,10 @@ public class MeteocentrumWebParser extends WebParser {
     public MeteoDataContainer getTestMeteoData() {
         Document baseTestWeatherDoc = FileReader.getContent(todayBaseTestFile);
 
+        Elements elements = baseTestWeatherDoc.getElementsByClass("description");
+        String s = elements.text();
+        Bio bio = getBio(baseTestWeatherDoc);
+
         return new MeteocentrumDataContainer();
     }
 
@@ -58,5 +65,18 @@ public class MeteocentrumWebParser extends WebParser {
         parseBaseTodayWeather();
 
         meteoDataContainer = new MeteocentrumDataContainer();
+    }
+
+    //////////////////PARSING METHODS/////////////////////
+    private Bio getBio(Document document) {
+        final int length = 5;
+        
+        String text = document.getElementsByClass("description").text();
+        int index = text.indexOf("Bio") + length;
+        
+        String bioString = text.substring(index, index + 1);
+        int bio = Integer.parseInt(bioString);
+        
+        return new Bio(bio);
     }
 }
