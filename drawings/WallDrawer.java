@@ -11,9 +11,7 @@ public class WallDrawer {
         BufferedImage image = null;
         
         try {
-
             image = ImageIO.read(file);
-
             ImageIO.write(image, "png", new File(path));
 
         } catch (IOException e) {

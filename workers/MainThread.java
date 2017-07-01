@@ -31,8 +31,7 @@ public class MainThread implements Runnable {
                 File wall = MeteocentrumDrawer.processData(meteocentrumDataContainer);
                 WallpaperUtil.setWallpaper(wall);
                 
-                System.out.println("ok");
-                
+                System.out.println("done, sleeping now");
                 Thread.sleep(refreshRate);
             }
         } catch (InterruptedException e) {
