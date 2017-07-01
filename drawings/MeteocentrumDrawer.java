@@ -15,7 +15,7 @@ public class MeteocentrumDrawer {
     }
 
     private static BufferedImage getEnrichedWallpaperImage(BufferedImage wallpaperImage) {
-        File moon = new File(Resource.MOON.getPath());
+        File moon = new File(Resource.Weather.HAIL.getPath());
         BufferedImage moonImage = FileReader.getImage(moon);
 
         WallDrawer.drawOnImage(wallpaperImage, moonImage, 200, 200);
