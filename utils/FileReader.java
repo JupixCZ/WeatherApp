@@ -5,12 +5,11 @@ import java.io.IOException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-
 public class FileReader {
-    
-        public static Document getContent(String path) {
+
+    public static Document getContent(String path) {
         Document document = null;
-        
+
         File file = new File(path);
 
         try {
@@ -21,5 +20,9 @@ public class FileReader {
         }
 
         return document;
+    }
+
+    public static File getFile(String path) {
+        return new File(path);
     }
 }

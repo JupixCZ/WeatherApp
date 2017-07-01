@@ -1,6 +1,8 @@
 package weatherapp.workers;
 
+import java.io.File;
 import weatherapp.domain.weather.MeteocentrumDataContainer;
+import weatherapp.drawings.MeteocentrumDrawer;
 import weatherapp.enums.ModuleType;
 import weatherapp.utils.WallpaperUtil;
 
@@ -25,10 +27,9 @@ public class MainThread implements Runnable {
                 //dataProvider.prepareModulesData(ModuleType.getAllModules());
                 dataProvider.prepareTestModuleData(ModuleType.METEOCENTRUM);
                 MeteocentrumDataContainer meteocentrumDataContainer = dataProvider.getMeteocentrumData();
-                //String path = "test2.jpg";
-                String path = "D:\\Docs\\Dokumenty\\Develop\\WeatherApp\\src\\weatherapp\\utils\\test2.jpg";
-
-                WallpaperUtil.setWallpaper(path);
+                
+                File wall = MeteocentrumDrawer.processData(meteocentrumDataContainer);
+                WallpaperUtil.setWallpaper(wall);
                 
                 System.out.println("ok");
                 

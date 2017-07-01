@@ -13,7 +13,7 @@ public class MeteocentrumWebParser extends WebParser {
 
     private MeteoDataContainer meteoDataContainer;
     private final String todayBaseURL = "http://www.meteocentrum.cz/predpoved-pocasi/cz/5917/usti-nad-labem/den/1";
-    private final String todayBaseTestFile = "meteocentrumTodayBaseTest.html";
+    private final String todayBaseTestFile = "resources/meteocentrumTodayBaseTest.html";
 
     public MeteocentrumWebParser() {
         moduleType = ModuleType.METEOCENTRUM;

@@ -3,10 +3,14 @@ package weatherapp.utils;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.win32.W32APIOptions;
+import java.io.File;
+import weatherapp.drawings.WallDrawer;
 
 public class WallpaperUtil {
 
-    public static void setWallpaper(String path) {
+    public static void setWallpaper(File wall) {
+        String path = wall.getAbsolutePath();
+        
         User32.INSTANCE.SystemParametersInfo(0x0014, 0, path, 1);
     }
 
