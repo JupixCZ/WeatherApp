@@ -1,10 +1,13 @@
 package weatherapp.parsers;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import weatherapp.domain.weather.Bio;
 import weatherapp.domain.weather.MeteoDataContainer;
 import weatherapp.domain.weather.MeteocentrumDataContainer;
+import weatherapp.domain.weather.MeteocentrumWeather;
 import weatherapp.enums.ModuleType;
 import weatherapp.enums.Resource;
 import weatherapp.utils.FileReader;
@@ -54,15 +57,20 @@ public class MeteocentrumWebParser extends WebParser {
         Elements elements = baseTestWeatherDoc.getElementsByClass("description");
         String s = elements.text();
         Bio bio = getBio(baseTestWeatherDoc);
+        
+        List<MeteocentrumWeather> weatherToday = new ArrayList<>();
+        MeteocentrumWeather weatherNow = new MeteocentrumWeather(0, Resource.Weather.RAIN);
+        
+        weatherToday.add(weatherNow);
 
-        return new MeteocentrumDataContainer();
+        return new MeteocentrumDataContainer(bio, weatherToday, null);
     }
 
     @Override
     protected void refreshMeteoData() {
         parseBaseTodayWeather();
 
-        meteoDataContainer = new MeteocentrumDataContainer();
+        //meteoDataContainer = new MeteocentrumDataContainer();
     }
 
     //////////////////PARSING METHODS/////////////////////
