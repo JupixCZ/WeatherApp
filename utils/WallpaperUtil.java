@@ -4,7 +4,6 @@ import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.win32.W32APIOptions;
 import java.io.File;
-import weatherapp.drawings.WallDrawer;
 
 public class WallpaperUtil {
 

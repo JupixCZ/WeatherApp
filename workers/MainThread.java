@@ -1,9 +1,11 @@
 package weatherapp.workers;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import weatherapp.domain.weather.MeteocentrumDataContainer;
 import weatherapp.drawings.MeteocentrumDrawer;
 import weatherapp.enums.ModuleType;
+import weatherapp.utils.FileReader;
 import weatherapp.utils.WallpaperUtil;
 
 public class MainThread implements Runnable {
@@ -11,6 +13,9 @@ public class MainThread implements Runnable {
     private Thread mainThread;
     private final int refreshRate;
     private final int MILIS_IN_MINUTE = 60000;
+    
+    final static String TEST_BASE_WALL_PATH = "resources/baseWalls/test.png";
+    final static String OUTPUT_TEMP_PATH = "resources/temp/out-temp.png";
 
     public MainThread(short refreshRateInMins) {
         this.refreshRate = refreshRateInMins * MILIS_IN_MINUTE;
@@ -19,18 +24,23 @@ public class MainThread implements Runnable {
     @Override
     public void run() {
         DataProvider dataProvider = new DataProvider();
-        
+
         try {
             while (true) {
                 System.out.println("refresh");
-                
+
                 //dataProvider.prepareModulesData(ModuleType.getAllModules());
                 dataProvider.prepareTestModuleData(ModuleType.METEOCENTRUM);
                 MeteocentrumDataContainer meteocentrumDataContainer = dataProvider.getMeteocentrumData();
-                
-                File wall = MeteocentrumDrawer.processData(meteocentrumDataContainer);
-                WallpaperUtil.setWallpaper(wall);
-                
+
+                File wallpaper = new File(TEST_BASE_WALL_PATH);
+                BufferedImage baseWallImage = FileReader.getImage(wallpaper);
+
+                BufferedImage enrichedImage = MeteocentrumDrawer.enrichWallpaperImage(meteocentrumDataContainer, baseWallImage);
+                File enrichedWallpaper = FileReader.createFileFromImage(enrichedImage, OUTPUT_TEMP_PATH);
+
+                WallpaperUtil.setWallpaper(enrichedWallpaper);
+
                 System.out.println("done, sleeping now");
                 Thread.sleep(refreshRate);
             }
