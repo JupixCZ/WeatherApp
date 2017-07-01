@@ -3,12 +3,10 @@ package weatherapp.drawings;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import weatherapp.domain.weather.MeteocentrumDataContainer;
+import weatherapp.enums.Resource;
 import weatherapp.utils.FileReader;
 
 public class MeteocentrumDrawer {
-
-    final static String OUTPUT_PATH = "resources/out.png";
-    final static String MOON_PATH = "resources/weatherIcons/moon.png";
 
     public static BufferedImage enrichWallpaperImage(MeteocentrumDataContainer meteocentrumDataContainer, BufferedImage wallpaperImage) {
         wallpaperImage = getEnrichedWallpaperImage(wallpaperImage);
@@ -17,7 +15,7 @@ public class MeteocentrumDrawer {
     }
 
     private static BufferedImage getEnrichedWallpaperImage(BufferedImage wallpaperImage) {
-        File moon = new File(MOON_PATH);
+        File moon = new File(Resource.MOON.getPath());
         BufferedImage moonImage = FileReader.getImage(moon);
 
         WallDrawer.drawOnImage(wallpaperImage, moonImage, 200, 200);

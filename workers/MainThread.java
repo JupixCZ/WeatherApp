@@ -5,6 +5,7 @@ import java.io.File;
 import weatherapp.domain.weather.MeteocentrumDataContainer;
 import weatherapp.drawings.MeteocentrumDrawer;
 import weatherapp.enums.ModuleType;
+import weatherapp.enums.Resource;
 import weatherapp.utils.FileReader;
 import weatherapp.utils.WallpaperUtil;
 
@@ -13,9 +14,6 @@ public class MainThread implements Runnable {
     private Thread mainThread;
     private final int refreshRate;
     private final int MILIS_IN_MINUTE = 60000;
-    
-    final static String TEST_BASE_WALL_PATH = "resources/baseWalls/test.png";
-    final static String OUTPUT_TEMP_PATH = "resources/temp/out-temp.png";
 
     public MainThread(short refreshRateInMins) {
         this.refreshRate = refreshRateInMins * MILIS_IN_MINUTE;
@@ -33,11 +31,11 @@ public class MainThread implements Runnable {
                 dataProvider.prepareTestModuleData(ModuleType.METEOCENTRUM);
                 MeteocentrumDataContainer meteocentrumDataContainer = dataProvider.getMeteocentrumData();
 
-                File wallpaper = new File(TEST_BASE_WALL_PATH);
+                File wallpaper = new File(Resource.INPUT_BASE_WALLPAPER.getPath());
                 BufferedImage baseWallImage = FileReader.getImage(wallpaper);
 
                 BufferedImage enrichedImage = MeteocentrumDrawer.enrichWallpaperImage(meteocentrumDataContainer, baseWallImage);
-                File enrichedWallpaper = FileReader.createFileFromImage(enrichedImage, OUTPUT_TEMP_PATH);
+                File enrichedWallpaper = FileReader.createFileFromImage(enrichedImage, Resource.OUTPUT_WALLPAPER.getPath());
 
                 WallpaperUtil.setWallpaper(enrichedWallpaper);
 

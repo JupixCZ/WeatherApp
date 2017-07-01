@@ -6,21 +6,20 @@ import weatherapp.domain.weather.Bio;
 import weatherapp.domain.weather.MeteoDataContainer;
 import weatherapp.domain.weather.MeteocentrumDataContainer;
 import weatherapp.enums.ModuleType;
+import weatherapp.enums.Resource;
 import weatherapp.utils.FileReader;
 import weatherapp.utils.UrlReader;
 
 public class MeteocentrumWebParser extends WebParser {
 
     private MeteoDataContainer meteoDataContainer;
-    private final String todayBaseURL = "http://www.meteocentrum.cz/predpoved-pocasi/cz/5917/usti-nad-labem/den/1";
-    private final String todayBaseTestFile = "resources/meteocentrumTodayBaseTest.html";
 
     public MeteocentrumWebParser() {
         moduleType = ModuleType.METEOCENTRUM;
     }
 
     public void parseBaseTodayWeather() {
-        parseBaseWeather(todayBaseURL);
+        parseBaseWeather(Resource.METEO_TODAY_BASE_URL.getPath());
     }
 
     private void parseBaseWeather(String URL) {
@@ -50,7 +49,7 @@ public class MeteocentrumWebParser extends WebParser {
 
     @Override
     public MeteoDataContainer getTestMeteoData() {
-        Document baseTestWeatherDoc = FileReader.getContent(todayBaseTestFile);
+        Document baseTestWeatherDoc = FileReader.getContent(Resource.METEO_TODAY_BASE_TEST_FILE.getPath());
 
         Elements elements = baseTestWeatherDoc.getElementsByClass("description");
         String s = elements.text();
