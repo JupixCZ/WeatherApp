@@ -27,8 +27,8 @@ public class MainThread implements Runnable {
             while (true) {
                 System.out.println("refresh");
 
-                //dataProvider.prepareModulesData(ModuleType.getAllModules());
-                dataProvider.prepareTestModuleData(ModuleType.METEOCENTRUM);
+                dataProvider.prepareModulesData(ModuleType.getAllModules());
+                //dataProvider.prepareTestModuleData(ModuleType.METEOCENTRUM);
                 MeteocentrumDataContainer meteocentrumDataContainer = dataProvider.getMeteocentrumData();
 
                 File wallpaper = new File(Resource.INPUT_BASE_WALLPAPER.getPath());

@@ -3,22 +3,24 @@ package weatherapp.drawings;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import weatherapp.domain.weather.MeteocentrumDataContainer;
-import weatherapp.enums.Resource;
+import weatherapp.domain.weather.MeteocentrumWeather;
 import weatherapp.utils.FileReader;
 
 public class MeteocentrumDrawer {
 
     public static BufferedImage enrichWallpaperImage(MeteocentrumDataContainer meteocentrumDataContainer, BufferedImage wallpaperImage) {
-        wallpaperImage = getEnrichedWallpaperImage(wallpaperImage);
+        wallpaperImage = getEnrichedWallpaperImage(meteocentrumDataContainer, wallpaperImage);
 
         return wallpaperImage;
     }
 
-    private static BufferedImage getEnrichedWallpaperImage(BufferedImage wallpaperImage) {
-        File moon = new File(Resource.Weather.HAIL.getPath());
-        BufferedImage moonImage = FileReader.getImage(moon);
+    private static BufferedImage getEnrichedWallpaperImage(MeteocentrumDataContainer meteocentrumDataContainer, BufferedImage wallpaperImage) {
+        MeteocentrumWeather meteocentrumWeather = meteocentrumDataContainer.getWeatherNow();
+        
+        File weatherFile = new File(meteocentrumWeather.getWeather().getPath());
+        BufferedImage weatherImage = FileReader.getImage(weatherFile);
 
-        WallDrawer.drawOnImage(wallpaperImage, moonImage, 200, 200);
+        WallDrawer.drawOnImage(wallpaperImage, weatherImage, 200, 200);
 
         return wallpaperImage;
     }

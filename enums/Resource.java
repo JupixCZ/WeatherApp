@@ -1,5 +1,8 @@
 package weatherapp.enums;
 
+import java.util.Arrays;
+import java.util.List;
+
 public enum Resource {
 
     INPUT_BASE_WALLPAPER("resources/baseWalls/test.png"),
@@ -18,7 +21,7 @@ public enum Resource {
     }
 
     public enum Weather {
-        
+
         UNKNOWN("resources/weatherIcons/unknown.png", 1),
         
         SUNNY("resources/weatherIcons/sunny.png", 2),
@@ -58,7 +61,6 @@ public enum Resource {
         NIGHT_MIXED_SHOWERS("resources/weatherIcons/night_mixed_showers.png", 35),
         NIGHT_FREEZING_RAIN_SHOWERS("resources/weatherIcons/night_freezing_rain_showers.png", 36);
 
-
         private final String path;
         private final int state;
 
@@ -69,6 +71,21 @@ public enum Resource {
 
         public String getPath() {
             return path;
+        }
+        
+        public int getState() {
+            return state;
+        }
+
+        public static Resource.Weather getResourceByState(int state) {
+            List<Resource.Weather> resources = Arrays.asList(Resource.Weather.values());
+            for (Resource.Weather resource : resources) {
+                if (resource.getState() == state) {
+                    return resource;
+                }
+            }
+            
+            return UNKNOWN;
         }
     }
 }
