@@ -48,8 +48,7 @@ public class FileReader {
         try {
             image = ImageIO.read(file);
         } catch (IOException e) {
-            System.out.println("Error reading file for image.");
-            System.exit(-1);
+            ExceptionHandler.handleException(e);
         }
         
         return image;
