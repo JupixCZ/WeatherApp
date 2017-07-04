@@ -17,25 +17,31 @@ import weatherapp.utils.UrlReader;
 public class MeteocentrumWebParser extends WebParser {
 
     private MeteoDataContainer meteoDataContainer;
+    private final int TIME_SCOPE = 6;
 
     public MeteocentrumWebParser() {
         moduleType = ModuleType.METEOCENTRUM;
     }
 
     public void parseBaseTodayWeather() {
-        parseBaseWeather(Resource.METEO_TODAY_BASE_URL.getPath());
-    }
+        Document todayBaseWeatherDoc = UrlReader.getContent(Resource.METEO_TODAY_BASE_URL.getPath());
+        Document tomorrowBaseWeatherDoc = UrlReader.getContent(Resource.METEO_TOMORROW_BASE_URL.getPath());
 
-    private void parseBaseWeather(String URL) {
-        Document baseWeatherDoc = UrlReader.getContent(URL);
-
-        String description = baseWeatherDoc.getElementsByClass("description").text();
-        Bio bio = getBio(baseWeatherDoc);
+        String description = todayBaseWeatherDoc.getElementsByClass("description").text();
+        Bio bio = getBio(todayBaseWeatherDoc);
 
         List<MeteocentrumWeather> weatherToday = new ArrayList<>();
-        MeteocentrumWeather weatherNow = getWeatherNow(baseWeatherDoc);
+        MeteocentrumWeather weatherNow = getWeatherNow(todayBaseWeatherDoc);
+
+        int possibleTimeScope = weatherNow.getHour() + TIME_SCOPE;
+        int maxTimeScope = possibleTimeScope > 24 ? possibleTimeScope - 24 : possibleTimeScope;
+
+        MeteocentrumWeather weatherNext = getWeatherNext(todayBaseWeatherDoc, tomorrowBaseWeatherDoc, weatherNow, maxTimeScope);
+        MeteocentrumWeather weatherLater = getWeatherNext(todayBaseWeatherDoc, tomorrowBaseWeatherDoc, weatherNext, maxTimeScope);
 
         weatherToday.add(weatherNow);
+        weatherToday.add(weatherNext);
+        weatherToday.add(weatherLater);
 
         meteoDataContainer = new MeteocentrumDataContainer(bio, weatherToday, null);
     }
@@ -90,24 +96,111 @@ public class MeteocentrumWebParser extends WebParser {
         return new Bio(bio);
     }
 
-    private MeteocentrumWeather getWeatherNow(Document document) {
-        Elements elements = document.getElementsByClass("forecast-table-vertical").select("tr");
+    private MeteocentrumWeather getWeatherNow(Document weatherTodayDoc) {
+        Elements elements = weatherTodayDoc.getElementsByClass("forecast-table-vertical").select("tr");
         List<Element> elementList = elements.subList(2, elements.size());
-        Resource.Weather weather = Resource.Weather.UNKNOWN;
+        Resource.Weather weather;
+
+        int currentHour = 24;
+        boolean readyToBrake = false;
+        Integer state = null;
 
         for (Element element : elementList) {
             Elements weatherData = element.select("td");
             String weatherDataString = weatherData.html();
             String[] dataLines = weatherDataString.split("\\n", 2);
 
-            if (dataLines[0].contains("Aktuálně")) {
-                String wiStateLine = dataLines[1];
-                
-                int state = Integer.parseInt(wiStateLine.substring(wiStateLine.indexOf("state-") + 6, wiStateLine.indexOf("title") - 2));
-                weather = Resource.Weather.getResourceByState(state);
+            if (readyToBrake) {
+                String timeLine = dataLines[0];
+                currentHour = Integer.parseInt(timeLine.substring(0, timeLine.length() - 3));
+                currentHour--;
+                break;
+            } else {
+                if (state == null) {    //countering case if time is 24.00
+                    state = getWeatherState(dataLines);
+                }
+                if (dataLines[0].contains("Aktuálně")) {
+                    state = getWeatherState(dataLines);
+
+                    readyToBrake = true;
+                }
             }
         }
 
-        return new MeteocentrumWeather(null , weather);
+        weather = Resource.Weather.getResourceByState(state);
+
+        return new MeteocentrumWeather(currentHour, weather);
+    }
+
+    private MeteocentrumWeather getWeatherNext(Document weatherTodayDoc, Document weatherTomorrowDoc, MeteocentrumWeather previousWeather, int maxTimeScope) {
+        if (previousWeather == null) {
+            return null;
+        }
+
+        int previousWeatherTime = previousWeather.getHour();
+        int previousWeatherState = previousWeather.getWeather().getState();
+
+        Elements elements = weatherTodayDoc.getElementsByClass("forecast-table-vertical").select("tr");
+        List<Element> elementList = elements.subList(2, elements.size());
+
+        int currentHour;
+        int currentWeatherState;
+        boolean neededTomorrowCheck = previousWeatherTime > maxTimeScope;
+
+        for (Element element : elementList) {
+            Elements weatherData = element.select("td");
+            String weatherDataString = weatherData.html();
+            String[] dataLines = weatherDataString.split("\\n", 2);
+
+            String timeLine = dataLines[0];
+            if (timeLine.contains("Aktuálně")) {
+                continue;
+            }
+
+            currentHour = Integer.parseInt(timeLine.substring(0, timeLine.length() - 3));
+            if (currentHour < previousWeatherTime) {
+                continue;
+            } else if (!neededTomorrowCheck && currentHour > maxTimeScope) {
+                break;
+            }
+
+            currentWeatherState = getWeatherState(dataLines);
+            if (currentWeatherState != previousWeatherState) {
+                Resource.Weather nextWeatherState = Resource.Weather.getResourceByState(currentWeatherState);
+                return new MeteocentrumWeather(currentHour, nextWeatherState);
+            }
+        }
+
+        if (neededTomorrowCheck) {
+            elements = weatherTomorrowDoc.getElementsByClass("forecast-table-vertical").select("tr");
+            elementList = elements.subList(2, elements.size());
+
+            for (Element element : elementList) {
+                Elements weatherData = element.select("td");
+                String weatherDataString = weatherData.html();
+                String[] dataLines = weatherDataString.split("\\n", 2);
+
+                String timeLine = dataLines[0];
+
+                currentHour = Integer.parseInt(timeLine.substring(0, timeLine.length() - 3));
+                if (currentHour > maxTimeScope) {
+                    break;
+                }
+
+                currentWeatherState = getWeatherState(dataLines);
+                if (currentWeatherState != previousWeatherState) {
+                    Resource.Weather nextWeatherState = Resource.Weather.getResourceByState(currentWeatherState);
+                    return new MeteocentrumWeather(currentHour, nextWeatherState);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private int getWeatherState(String[] dataLines) {
+        String wiStateLine = dataLines[1];
+
+        return Integer.parseInt(wiStateLine.substring(wiStateLine.indexOf("state-") + 6, wiStateLine.indexOf("title") - 2));
     }
 }
