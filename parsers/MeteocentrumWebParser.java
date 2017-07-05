@@ -153,11 +153,17 @@ public class MeteocentrumWebParser extends WebParser {
             String[] dataLines = weatherDataString.split("\\n", 2);
 
             String timeLine = dataLines[0];
-            if (timeLine.contains("Aktuálně")) {
+
+            if (timeLine.length() == 0) {
                 continue;
             }
 
-            currentHour = Integer.parseInt(timeLine.substring(0, timeLine.length() - 3));
+            try {
+                currentHour = Integer.parseInt(timeLine.substring(0, timeLine.length() - 3));
+            } catch (NumberFormatException e) {
+                continue;
+            }
+
             if (currentHour < previousWeatherTime) {
                 continue;
             } else if (!neededTomorrowCheck && currentHour > maxTimeScope) {
@@ -188,7 +194,7 @@ public class MeteocentrumWebParser extends WebParser {
                 }
 
                 currentWeatherState = getWeatherState(dataLines);
-                if (currentWeatherState != previousWeatherState) {
+                if (Resource.Weather.equals(currentWeatherState, previousWeatherState)) {
                     Resource.Weather nextWeatherState = Resource.Weather.getResourceByState(currentWeatherState);
                     return new MeteocentrumWeather(currentHour, nextWeatherState);
                 }
